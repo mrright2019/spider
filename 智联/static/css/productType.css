@@ -1,0 +1,49 @@
+.type_title {
+    font-size:25px;
+    margin:25px;
+    text-align:center;
+    color:#777;
+}
+.type_button_container {
+    position: absolute;
+    margin-left: 10%;
+    margin-top: 10px;
+}
+.prodcutEdit {
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #999;
+    border: 0;
+    border-bottom: 1px solid #e6e6e6;
+    outline: 0;
+    border-bottom: 2px solid #9E9E9E;
+    text-align: center;
+}
+.layui-layer-content {
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+.layui-layer-content .content {
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+.layui-layer-btn {
+    background-color: #F8F8F8;
+}
+#userListTable td{
+    max-width: 100px;
+    vertical-align: middle;
+}
+
+.allTypeProducts tbody tr td {
+    max-width: 50px;
+    overflow: scroll;
+}
+.errTips {
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    color: red;
+}

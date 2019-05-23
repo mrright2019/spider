@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/Bootstrap/css/bootstrap.min.css" >
+        <link rel="stylesheet" href="/static//update/css/font-awesome.min.css" >
+        <link rel="stylesheet" href="/static/update/css/buttons.css" >
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
+        <link rel="stylesheet" href="/static/css/productType.css">
+    </head>
+    <body>
+        <div class="type_title">招聘需求--<strong style="color: #00BCD4;">{{ state }} - {{ industry }}</strong></div>
+        <div class="type_button_container">
+            <button id="backHomePage" type="button" class="button button-glow button-rounded button-raised button-primary button-small">返回主页</button>
+
+        </div>
+        <div style="height: fit-content;width:80%;margin-left:10%; ">
+            <table id="userListTable" data-use-row-attr-func="true" data-reorderable-rows="true"></table>
+        </div>
+    </body>
+    <script src="/static/jquery-3.3.1.min.js"></script>
+    <script src="/static/jquery-cookie.js"></script>
+    <script src="/static/Bootstrap/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="/static/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="/static/js/productType.js"></script>
+    <script>
+        $(function(){
+            typename = "{{ thistypeName }}";
+            window.actionEvents = {
+            'click .up': function (e, value, row, index) {
+                var source = JSON.stringify($('#userListTable').bootstrapTable('getData')[index]);
+                var target = JSON.stringify($('#userListTable').bootstrapTable('getData')[index - 1]);
+                if (target){
+                    $.ajax({
+                        type: "POST",
+                        url: "/exchangeItem/",
+                        data:{"source":source, 'target':target},
+                        headers: {
+                            'X-CSRFToken': $.cookie('csrftoken')
+                        },
+                        async: true,
+                        success: function (data) {
+                            // alert(data);                       
+                        }
+                    });
+                    source_id = JSON.parse(source)['pid'];
+                    target_id = JSON.parse(target)['pid'];
+                    source = JSON.parse(source);
+                    target = JSON.parse(target);
+                    source['pid'] = target_id;
+                    target['pid'] = source_id;
+                    source  = JSON.stringify(source);
+                    target  = JSON.stringify(target);
+                }
+                $('#userListTable').bootstrapTable('updateRow', {'index':index - 1, 'row': JSON.parse(source)});
+                $('#userListTable').bootstrapTable('updateRow', {'index':index, 'row': JSON.parse(target)});
+            },
+            'click .down': function (e, value, row, index) {
+                var source = JSON.stringify($('#userListTable').bootstrapTable('getData')[index]);
+                var target = JSON.stringify($('#userListTable').bootstrapTable('getData')[index + 1]);
+                if (target){
+                    $.ajax({
+                        type: "POST",
+                        url: "/exchangeItem/",
+                        data:{"source":source, 'target':target},
+                        headers: {
+                            'X-CSRFToken': $.cookie('csrftoken')
+                        },
+                        async: true,
+                        success: function (data) {
+                            // alert(data);                       
+                        }
+                    });
+                    source_id = JSON.parse(source)['pid'];
+                    target_id = JSON.parse(target)['pid'];
+                    source = JSON.parse(source);
+                    target = JSON.parse(target);
+                    source['pid'] = target_id;
+                    target['pid'] = source_id;
+                    source  = JSON.stringify(source);
+                    target  = JSON.stringify(target);
+                }
+                $('#userListTable').bootstrapTable('updateRow', {'index':index + 1, 'row': JSON.parse(source)});
+                $('#userListTable').bootstrapTable('updateRow', {'index':index, 'row': JSON.parse(target)});
+                }
+            };
+            function fmtMoveUp(value) {return '<a class="action up" href="javascript:void(0)" title="Move up">▲</a>';};
+            function fmtMoveDown(value) {return '<a class="action down" href="javascript:void(0)" title="Move down">▽</a>';};
+            var columns=[
+                // {
+                //     field:'Up', title:'', align:'center', width:40, formatter:fmtMoveUp, events:actionEvents
+                // },
+
+                // {
+                //     field:'Down', title:'', align:'center', width:40, formatter:fmtMoveDown, events:actionEvents
+                // },
+                {
+                    title: '详情链接',
+                    field: 'positionURL',//'prodcut_url',
+                    align: 'center',
+                    valign: 'middle',
+                    formatter : function (value, row, index) {
+                        return "<a class='productURL' style='width: 50px;height: 50px;' target='_blank' href='"+value+"'>查看岗位详细信息</a>"
+                    }
+                },
+                {
+                    title: '岗位名称',
+                    field: 'jobName',//'prodcut_photo',
+                    align: 'center',
+                    // formatter : function (value, row, index) {
+                    //     return "<img style='width: 50px;height: 50px;' src='"+value+"' alt=''>"
+                    // }
+                },
+                {
+                    title: '行业',
+                    field: 'industry',//'date',
+                    align: 'center',
+                },
+                {
+                    title: '工资区间',
+                    field: 'salary',//'unit_price',
+                    align: 'center',
+                    sortable: true,
+                },
+                {
+                    title: '要求工作经验',
+                    field: 'workingExp',//'odd_days',
+                    align: 'center',
+                    sortable: true,
+                },
+                {
+                  title:'公司',
+                  field:'company',
+                  sortable: true,
+                  align:'center',
+                },
+                {
+                  title:'公司规模',
+                  field:'size',
+                  sortable: true,
+                  align:'center',
+                },
+                {
+                    title: "公司类型",
+                    field: "type",
+                    align: 'center',
+                    valign: 'middle',
+                },
+            ];
+            a('/thanks/',columns);
+    
+        });
+        function a (dataurl,columns) {
+            var datas = {{ data|safe }};
+            $('#userListTable').bootstrapTable({
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded",
+                striped:true,//隔行变色
+                cache:false,  //是否使用缓存
+                showColumns:true,// 列
+                toolbar:'#toolbar',
+                pagination: true, //分页
+                //paginationLoop:true,
+                paginationPreText:'上一页',
+                paginationNextText:'下一页',
+                //showFooter:true,//显示列脚
+                //showPaginationSwitch:true,//是否显示数据条数选择框
+                sortable: true,           //是否启用排序
+                singleSelect: false,
+                search:true, //显示搜索框
+                buttonsAlign: "right", //按钮对齐方式
+                showRefresh:false,//是否显示刷新按钮
+                sidePagination: "client", //服务端处理分页
+                pageNumber:1,
+                // pageSize:10,
+                //pageList:[10,20, 30, 50, 100],
+                undefinedText:'--',
+                uniqueId: "id", //每一行的唯一标识，一般为主键列
+                queryParamsType:'',
+                columns: columns,
+                data: datas
+            });
+
+        }
+    </script>
+</html>

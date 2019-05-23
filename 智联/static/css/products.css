@@ -1,0 +1,15 @@
+tbody tr td {
+    max-width: 50px;
+    overflow: scroll;
+}
+.type_title {
+    font-size:25px;
+    margin:25px;
+    text-align:center;
+    color:#777;
+}
+.type_button_container {
+    position: absolute;
+    margin-left: 10%;
+    margin-top: 10px;
+}

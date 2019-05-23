@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/Bootstrap/css/bootstrap.min.css" >
+        <link rel="stylesheet" href="/static//update/css/font-awesome.min.css" >
+        <link rel="stylesheet" href="/static/update/css/buttons.css" >
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
+        <link rel="stylesheet" href="/static/css/productType.css">
+
+    </head>
+    <body>
+        <div class="type_title"><strong style="color: #00BCD4;">全部行业-城市信息</strong></div>
+        <div class="type_button_container">
+            <button id="addProduct" type="button" class="button button-glow button-rounded button-highlight button-small">新建爬虫</button>
+	    </div>
+        <div style="height: fit-content;width:80%;margin-left:10%; ">
+            <table id="userListTable" class="" ></table>
+        </div>
+        <div hidden="hidden">
+                <div id="addProductContainer" >
+                    城市: <input id="addState" type="text" name="state" class="prodcutEdit" value="" placeholder="城市" style="width: 311px;padding-top: 20px;"><br/>
+                    行业: <input id="addIndustry" type="text" name="industry" class="prodcutEdit" value="" placeholder="行业" style="width: 311px;padding-top: 20px;">
+                </div>
+            </div>
+    </body>
+    <script src="/static/jquery-3.3.1.min.js"></script>
+    <script src="/static/jquery-cookie.js"></script>
+    <script src="/static/Bootstrap/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="/static/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="/static/js/products.js"></script>
+    <script>
+
+        $(function(){
+            var columns = {{ columns|safe }};
+            var cols = [];
+            for(var i=0 ; i<columns.length ; i++)
+            {
+                var item;
+                if(columns[i][1] == 'id')
+                {
+                    item = {
+                        title: columns[i][0],
+                        field: columns[i][1],
+                        align: 'center',
+                        valign: 'middle',
+                        formatter : function (value, row, index) {
+                            return "<a style='width: 50px;height: 50px;' target='_self' href='"+'/type/'+value+ '/'+ "'>查看</a>"
+                        }
+                    };
+                }
+                else{
+                    item = {
+                        title: columns[i][0],
+                        field: columns[i][1],
+                        align: 'center',
+                        valign: 'middle'
+                    };
+                    if(columns[i][1] == "delete"){
+                        item = {
+                            title: columns[i][0],
+                            field: columns[i][1],
+                            align: 'center',
+                            valign: 'middle',
+                            width:40,formatter:function(value){
+                                return "<a href='javascript:ajax_del("+value+");'>删除</a>";
+                            }
+                        };
+                    }
+                }
+
+                cols.push(item);
+            }
+            a('/products/',cols);
+    
+        });
+        function a (dataurl,columns) {
+            var datas = {{ datas|safe }};
+            $('#userListTable').bootstrapTable({
+                //url: dataurl,
+                //method:"post",
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded",
+                striped:true,//隔行变色
+                cache:false,  //是否使用缓存
+                showColumns:true,// 列
+                toobar:'#toolbar',
+                //pagination: true, //分页
+                //paginationLoop:true,
+                //paginationPreText:'上一页',
+                //paginationNextText:'下一页',
+                //showFooter:true,//显示列脚
+                //showPaginationSwitch:true,//是否显示数据条数选择框
+                sortable: true,           //是否启用排序
+                sortOrder: "asc",
+                singleSelect: false,
+                search:true, //显示搜索框
+                buttonsAlign: "right", //按钮对齐方式
+                //showRefresh:true,//是否显示刷新按钮
+                sidePagination: "client", //服务端处理分页
+                pageNumber:1,
+                //pageSize:10,
+                //pageList:[10,20, 30, 50, 100],
+                undefinedText:'--',
+                uniqueId: "id", //每一行的唯一标识，一般为主键列
+                queryParamsType:'',
+                columns: columns,
+                data: datas
+            });
+        }
+
+        function do_up_down(id1,type1,id2,type2){
+            $.ajax({
+                type: "POST",
+                url: window.location.href,
+                data:{action:"do", id1:id1, type1:type1,id2:id2,type2:type2},        
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    'X-CSRFToken': $.cookie('csrftoken')
+                },
+                success: function (data) {
+                    // alert(data);                             
+                }
+            });
+        };
+
+        function ajax_del(id){
+            $.ajax({
+                type:"POST",
+                url:window.location.href,
+                data :{action:'delete',id:id},
+                success:function(data){
+                    if (data == 'ok'){
+                        layer.msg('删除成功!',{icon:6,time:2000});
+                        setTimeout("window.location.reload()", 2500);
+                    }else{
+
+                        layer.msg("删除是失败",{icon:6,time:2000});
+                        setTimeout("window.location.reload()", 2500);
+                    }
+
+                }
+            });
+        };
+    </script>
+</html>
